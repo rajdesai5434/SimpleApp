@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkatrade Demo App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="POST">
+                    <div class="input-group mb-3">
+                        <input type="text" placeholder="Search video here..." class="form-control" name="searchbar" oninput="replaceSpaces()">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit" value="search">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if video!={} and image!={} %}
+        <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <img src="{{video.thumbnail}}" class="card-img-top" alt="Video Thumbnail" width="200" height="400">
+                        <div class="card-body">
+                            <h5 class="card-title">{{video.title}}</h5>
+                            <p class="card-text">{{video.description}}</p>
+                            <a href="{{video.url}}" class="btn btn-primary">Watch Video</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <img src="{{image.link}}" class="card-img-top" alt="Image" width="200" height="400">
+                        <div class="card-body">
+                            <h5 class="card-title">{{image.title}}</h5>
+                            <a href="{{image.link}}" class="btn btn-primary">View Image</a>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        {% endif %}
+    <!-- Bootstrap JS (optional, if you need JavaScript features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function replaceSpaces() {
+            var inputField = document.getElementById('searchbar');
+            inputField.value = inputField.value.replace(/ /g, '%20');
+        }
+    </script>
+</body>
+</html>
