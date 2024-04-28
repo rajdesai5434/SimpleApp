@@ -6,7 +6,7 @@ import os
 app = Flask(__name__)
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY") #'AIzaSyAADqgLLdQqGfWP4eb02ugcsZ2kjjmLvrE'
+API_KEY = os.getenv("API_KEY")
 
 @app.route('/', methods=['GET'])
 def base_template():
