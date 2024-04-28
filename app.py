@@ -20,46 +20,48 @@ def serach_template():
     try:
         video_details = search_video(query)
         image_details = search_images(query)
+        return render_template('index.html',video=video_details,image=image_details[0])
     except Exception as e:
-        print(e)
-    # print(video_details)
-    # print(image_details)
-    return render_template('index.html',video=video_details,image=image_details[0])
-
+        return jsonify({'error': 'Not a valid input'}), 400
 
 @app.route('/video', methods=['GET'])
 def search_video(q=None):
-    query = q if q else request.args.get('q')
-    if query:
-        query = query.replace(" ","%20")
-        params = {
-            'part': 'snippet',
-            'q': query,
-            'type': 'video',
-            'maxResults': 1,
-            'key': API_KEY
-        }
-        response = requests.get('https://www.googleapis.com/youtube/v3/search', params=params)
-        if response.status_code == 200:
-            data = response.json()
-            video = {
-                    'title': data['items'][0]['snippet']['title'],
-                    'description': data['items'][0]['snippet']['description'],
-                    'videoId': data['items'][0]['id']['videoId'],
-                    'url': f"https://www.youtube.com/watch?v={ data['items'][0]['id']['videoId'] }",
-                    'thumbnail': data['items'][0]['snippet']['thumbnails']['default']['url']
-                }
-            if q:
-                return video
-            return jsonify(video)
+    try:
+        query = q if q else request.args.get('q')
+        if query:
+            query = query.replace(" ","%20")
+            params = {
+                'part': 'snippet',
+                'q': query,
+                'type': 'video',
+                'maxResults': 1,
+                'key': API_KEY
+            }
+            response = requests.get('https://www.googleapis.com/youtube/v3/search', params=params)
+            if response.status_code == 200:
+                data = response.json()
+                video={}
+                if len(data['items'])>0:
+                    video = {
+                            'title': data['items'][0]['snippet']['title'],
+                            'description': data['items'][0]['snippet']['description'],
+                            'videoId': data['items'][0]['id']['videoId'],
+                            'url': f"https://www.youtube.com/watch?v={ data['items'][0]['id']['videoId'] }",
+                            'thumbnail': data['items'][0]['snippet']['thumbnails']['default']['url']
+                        }
+                if q:
+                    return video
+                return jsonify(video)
+            else:
+                if q:
+                    return {}
+                return jsonify({'error': 'Failed to retrieve videos'}), response.status_code
         else:
             if q:
                 return {}
-            return jsonify({'error': 'Failed to retrieve videos'}), response.status_code
-    else:
-        if q:
-            return {}
-        return jsonify({'error': 'Query parameter "q" is required'}), 400
+            return jsonify({'error': 'Query parameter "q" is required'}), 400
+    except Exception as e:
+        return jsonify({'error': 'Invalid query string'}), 400
 
 @app.route('/image', methods=['GET'])
 def search_images(q=None):
